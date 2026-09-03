@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -272,6 +273,15 @@ button:active { transform: scale(0.97); }
     direction: rtl;
 }
 
+.info-value a {
+    color: var(--accent2);
+    text-decoration: none;
+}
+
+.info-value a:hover {
+    text-decoration: underline;
+}
+
 .badge {
     display: inline-block;
     background: var(--surface2);
@@ -399,6 +409,16 @@ function fillSelect(id, valuesSet) {
 
 window.addEventListener("DOMContentLoaded", populateFilters);
 
+// دالة بسيطة لتفادي مشاكل HTML عند طباعة نص المستخدم
+function escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
 async function searchReserve() {
     const resultsDiv = document.getElementById("results");
     const statusDiv = document.getElementById("status");
@@ -452,6 +472,8 @@ async function searchReserve() {
                 }).join("")}
                </div>`;
 
+            const locationUrl = row["Location"] || "";
+
             resultsDiv.innerHTML += `
                 <div class="card">
                     ${imageHtml}
@@ -491,8 +513,16 @@ async function searchReserve() {
                             <span class="info-value">${row["الوضع الإداري"] || "-"}</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">عدد الأنواع المسجلة</span>
-                            <span class="info-value">${row["عدد الأنواع المسجلة"] || "-"}</span>
+                            <span class="info-label">المصادر</span>
+                            <span class="info-value">${row["المصادر"] || "-"}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">ملاحظات</span>
+                            <span class="info-value">${escapeHtml(row["ملاحظات"]) || "-"}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Location</span>
+                            <span class="info-value">${locationUrl ? `<a href="${escapeHtml(locationUrl)}" target="_blank" rel="noopener noreferrer">📍 عرض الموقع</a>` : "-"}</span>
                         </div>
                         ${row["التصنيف الجديد"] ? `
                         <div class="info-row" style="margin-top:8px;">
