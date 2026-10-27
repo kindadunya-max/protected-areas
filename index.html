@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -136,6 +135,12 @@ header p {
 
 .field select:focus {
     border-color: var(--accent);
+}
+
+/* شكل القائمة المعطّلة */
+.field select:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .field input:focus {
@@ -381,12 +386,26 @@ async function populateFilters() {
         fillSelect("typeInput", types);
         updateNames();
 
-        document.getElementById("govInput").addEventListener("change", updateNames);
-        document.getElementById("typeInput").addEventListener("change", updateNames);
+        document.getElementById("govInput").addEventListener("change", onFilterChange);
+        document.getElementById("typeInput").addEventListener("change", onFilterChange);
 
     } catch (error) {
         console.error("تعذّر تحميل قوائم البحث:", error);
     }
+}
+
+// بتعطّل المحافظة أو النوع السائد حسب يلي انختار، وبتحدّث قائمة الأسماء
+function onFilterChange() {
+    const govSel  = document.getElementById("govInput");
+    const typeSel = document.getElementById("typeInput");
+
+    // إذا اخترت محافظة → بتتعطل قائمة النوع السائد
+    typeSel.disabled = govSel.value !== "";
+
+    // إذا اخترت نوع سائد → بتتعطل قائمة المحافظة
+    govSel.disabled = typeSel.value !== "";
+
+    updateNames();
 }
 
 // تعبئة قائمة الأسماء حسب المحافظة والنوع المختارين
